@@ -1,7 +1,7 @@
 import { Effect } from 'effect'
 import { getPieceAt, MoveError, type Move } from '.'
 import { type Square0x88, Color, PieceType } from '../../types'
-import { type Board0x88, isOnBoard } from '../board'
+import { type Board0x88, isOnBoard, toAlgebraicNotation } from '../board'
 
 export const getBishopPseudoLegalMoves = (
 	board: Board0x88,
@@ -14,7 +14,7 @@ export const getBishopPseudoLegalMoves = (
 		if (pieceAtFrom === null) {
 			return yield* Effect.fail(
 				new MoveError({
-					message: `No piece at source square ${fromSq}`,
+					message: `No piece at source square ${toAlgebraicNotation(fromSq)}`,
 					cause: 'EmptySourceSquare',
 				})
 			)
@@ -23,7 +23,7 @@ export const getBishopPseudoLegalMoves = (
 		if (pieceAtFrom.color !== turn) {
 			return yield* Effect.fail(
 				new MoveError({
-					message: `Piece at source square ${fromSq} is not of color ${turn}`,
+					message: `Piece at source square ${toAlgebraicNotation(fromSq)} is not of color ${turn}`,
 					cause: 'PieceOfOpponentColor',
 				})
 			)
@@ -32,7 +32,7 @@ export const getBishopPseudoLegalMoves = (
 		if (pieceAtFrom.type !== PieceType.Bishop) {
 			return yield* Effect.fail(
 				new MoveError({
-					message: `Piece at source square ${fromSq} is not a Bishop`,
+					message: `Piece at source square ${toAlgebraicNotation(fromSq)} is not a Bishop`,
 					cause: 'InvalidPieceType',
 				})
 			)

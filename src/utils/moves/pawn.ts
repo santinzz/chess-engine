@@ -1,7 +1,7 @@
 import { Effect } from 'effect'
 import { getPieceAt, MoveError, type Move } from '.'
 import { Color, PieceType, Rank, type Piece, type Square0x88 } from '../../types'
-import { from0x88, isOnBoard, type Board0x88 } from '../board'
+import { from0x88, isOnBoard, toAlgebraicNotation } from '../board'
 import type { GameState } from '../../board'
 
 const PAWN_OFFSETS = {
@@ -51,7 +51,7 @@ export const getPawnPseudoLegalMoves = (
 		if (pieceAtFrom === null) {
 			return yield* Effect.fail(
 				new MoveError({
-					message: `No piece at source square ${fromSq}`,
+					message: `No piece at source square ${toAlgebraicNotation(fromSq)}`,
 					cause: 'EmptySourceSquare',
 				})
 			)
@@ -60,7 +60,7 @@ export const getPawnPseudoLegalMoves = (
 		if (pieceAtFrom.color !== gameState.turn) {
 			return yield* Effect.fail(
 				new MoveError({
-					message: `Piece at source square ${fromSq} is not of color ${gameState.turn}`,
+					message: `Piece at source square ${toAlgebraicNotation(fromSq)} is not of color ${gameState.turn}`,
 					cause: 'PieceOfOpponentColor',
 				})
 			)
@@ -69,7 +69,7 @@ export const getPawnPseudoLegalMoves = (
 		if (pieceAtFrom.type !== PieceType.Pawn) {
 			return yield* Effect.fail(
 				new MoveError({
-					message: `Piece at source square ${fromSq} is not a Pawn`,
+					message: `Piece at source square ${toAlgebraicNotation(fromSq)} is not a Pawn`,
 					cause: 'InvalidPieceType',
 				})
 			)
@@ -160,7 +160,6 @@ export const getPawnPseudoLegalMoves = (
             isEnPassant: true,
           })
         }
-
       }
     }
 
