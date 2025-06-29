@@ -15,7 +15,8 @@ test('Rook initial pseudo-legal moves', () =>
 
       const moves = yield* getRookPseudoLegalMoves(
         a1RookSquare,
-        initialGameState
+        initialGameState.board,
+        initialGameState.turn
       )
 
       expect(moves).toHaveLength(0)
@@ -38,7 +39,8 @@ test('Rook pseudo-legal moves from a1 empty board', () =>
 
       const moves = yield* getRookPseudoLegalMoves(
         a1RookSquare,
-        emptyBoardGameState
+        emptyBoardGameState.board,
+        emptyBoardGameState.turn
       )
 
       expect(moves).toHaveLength(14)
@@ -62,7 +64,8 @@ test('white Rook pseudo-legal moves from d4 with pieces', () =>
 
       const moves = yield* getRookPseudoLegalMoves(
         d4RookSquare,
-        initialGameState
+        initialGameState.board,
+        initialGameState.turn
       )
       
       const movesInAlgebraic = moves.map(move => toAlgebraicNotation(move.to))

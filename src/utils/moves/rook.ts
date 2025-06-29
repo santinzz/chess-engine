@@ -6,9 +6,10 @@ import { isOnBoard, toAlgebraicNotation } from "../board";
 
 export const getRookPseudoLegalMoves = (
   fromSq: Square0x88,
-  gameState: GameState
+  board: GameState['board'],
+  turn: GameState['turn']
 ) => Effect.gen(function* () {
-  const pieceAtFrom = yield* getPieceAt(gameState.board, fromSq);
+  const pieceAtFrom = yield* getPieceAt(board, fromSq);
 
   if (pieceAtFrom === null) {
     return yield* Effect.fail(
@@ -19,10 +20,10 @@ export const getRookPseudoLegalMoves = (
     );
   }
 
-  if (pieceAtFrom.color !== gameState.turn) {
+  if (pieceAtFrom.color !== turn) {
     return yield* Effect.fail(
       new MoveError({
-        message: `Piece at source square ${toAlgebraicNotation(fromSq)} is not of color ${gameState.turn}`,
+        message: `Piece at source square ${toAlgebraicNotation(fromSq)} is not of color ${turn}`,
         cause: 'PieceOfOpponentColor',
       })
     );
@@ -45,7 +46,7 @@ export const getRookPseudoLegalMoves = (
       const targetSq = fromSq + direction * i;
       if (!isOnBoard(targetSq)) break;
 
-      const pieceAtTarget = gameState.board[targetSq];
+      const pieceAtTarget = board[targetSq];
       if (pieceAtTarget === null) {
         pseudoLegalMoves.push({
           from: fromSq,
@@ -75,7 +76,7 @@ export const getRookPseudoLegalMoves = (
       const targetSq = fromSq + direction * i * 16; // Move in the same file (rank) direction
       if (!isOnBoard(targetSq)) break;
 
-      const pieceAtTarget = gameState.board[targetSq];
+      const pieceAtTarget = board[targetSq];
       if (pieceAtTarget === null) {
         pseudoLegalMoves.push({
           from: fromSq,
