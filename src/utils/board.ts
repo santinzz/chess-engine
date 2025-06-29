@@ -114,6 +114,8 @@ export const AlgebraicNotationSchema = Schema.TemplateLiteral(
 	Schema.Literal(...RANKS)
 )
 
+export type AlgebraicNotation = typeof AlgebraicNotationSchema.Type
+
 export const parseAlgebraicNotation = (algebraicNotation: string) =>
 	Effect.gen(function* () {
 		const validated = yield* Schema.decodeUnknown(AlgebraicNotationSchema)(

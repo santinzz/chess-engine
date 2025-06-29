@@ -2,7 +2,7 @@ import { Effect } from "effect"
 import { Color, type Square0x88, PieceType, File, Rank } from "./types"
 import { type Board0x88, createEmpty0x88Board, to0x88 } from "./utils/board"
 
-type GameState = {
+export type GameState = {
 	board: Board0x88
 	turn: Color
 	castlingRights: {
