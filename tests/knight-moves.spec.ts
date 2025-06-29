@@ -5,7 +5,6 @@ import { initializeStartingBoard } from "../src/board";
 import { parseAlgebraicNotation, to0x88, toAlgebraicNotation } from "../src/utils/board";
 import { File, Rank } from "../src/types";
 import { modifyPiecePositionAlgebraic } from "../src/utils/moves/move-piece";
-import { printBoard } from "../src/utils/print-board";
 
 test('Knight initial pseudo-legal moves', () => 
   pipe(
@@ -38,8 +37,6 @@ test('Knight pseudo-legal moves from d4', () =>
         to0x88(File.D, Rank.R4),
         initialGameState.turn
       )
-
-      yield* printBoard(initialGameState)
 
       expect(moves).toHaveLength(6)
       const expectedMoves = yield* Effect.forEach([

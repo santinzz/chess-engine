@@ -11,7 +11,7 @@ export type Move = {
 	// Flags
 	isEnPassant?: boolean
 	isCastle?: boolean
-	isPownDoublePush?: boolean
+	isPawnDoublePush?: boolean
 }
 
 export class MoveError extends Data.TaggedError('MoveError')<{
