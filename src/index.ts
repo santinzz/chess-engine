@@ -1,8 +1,8 @@
-import { Console, Effect, Either, Schema } from 'effect'
+import { Console, Effect } from 'effect'
 import { BunContext, BunRuntime } from '@effect/platform-bun'
 import { initializeStartingBoard } from './board'
 import { type Piece, PieceType, Color, Rank, File } from './types'
-import { AlgebraicNotationSchema, type Board0x88, to0x88, toAlgebraicNotation } from './utils/board'
+import { type Board0x88, to0x88, toAlgebraicNotation } from './utils/board'
 
 const program = Effect.gen(function* () {
 	const initialGameState = yield* initializeStartingBoard()
@@ -15,7 +15,7 @@ const program = Effect.gen(function* () {
 				[PieceType.Pawn]: 'p',
 				[PieceType.Knight]: 'n',
 				[PieceType.Bishop]: 'b',
-				[PieceType.Rook]: 'r',
+				[PieceType.Rook]: 'r',  
 				[PieceType.Queen]: 'q',
 				[PieceType.King]: 'k',
 			}
@@ -54,15 +54,6 @@ const program = Effect.gen(function* () {
 	}
 
   yield* printBoard(initialGameState.board)
-
-  const validSquareEffect = Schema.decodeUnknownEither(AlgebraicNotationSchema)('e8')
-
-  if (Either.isLeft(validSquareEffect)) {
-    console.log('Invalid square: ' + validSquareEffect.left)
-  } else {
-    console.log('Valid square: ' + validSquareEffect.right)
-  }
-
 })
 
 BunRuntime.runMain(program.pipe(Effect.provide(BunContext.layer)))

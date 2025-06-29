@@ -55,39 +55,59 @@ const BASE0 = [0, 1, 2, 3, 4, 5, 6, 7] as const
 const FILES = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'] as const
 const RANKS = [1, 2, 3, 4, 5, 6, 7, 8] as const
 
-const FileSchema = Schema.transform(Schema.Literal(...FILES), Schema.Literal(...BASE0), {
-  decode: (fileChar) => {
-    return FILES.indexOf(fileChar) as typeof BASE0[number]
-  },
-  encode: (fileNum) => {
-    return FILES[fileNum] as typeof FILES[number]
-  },
-})
+const FileSchema = Schema.transform(
+	Schema.Literal(...FILES),
+	Schema.Literal(...BASE0),
+	{
+		decode: (fileChar) => {
+			return FILES.indexOf(fileChar) as (typeof BASE0)[number]
+		},
+		encode: (fileNum) => {
+			return FILES[fileNum] as (typeof FILES)[number]
+		},
+	}
+)
 
-const RankSchema = Schema.transformOrFail(Schema.Literal(...RANKS), Schema.Literal(...BASE0), {
-  decode: (input, _options, ast) => ParseResult.try({
-    try: () => {
-      const rankNum = input - 1
+const RankSchema = Schema.transformOrFail(
+	Schema.Literal(...RANKS),
+	Schema.Literal(...BASE0),
+	{
+		decode: (input, _options, ast) =>
+			ParseResult.try({
+				try: () => {
+					const rankNum = input - 1
 
-      if (rankNum < 0 || rankNum > 7) {
-        throw new Error(`Invalid rank: ${input}`)
-      }
-      return rankNum as typeof BASE0[number]
-    },
-    catch: (e) => new ParseResult.Type(ast, input, e instanceof Error ? e.message : 'Failed to parse rank'),
-  }),
-  encode: (input, _options, ast) => ParseResult.try({
-    try: () => {
-      const rank = input + 1
+					if (rankNum < 0 || rankNum > 7) {
+						throw new Error(`Invalid rank: ${input}`)
+					}
+					return rankNum as (typeof BASE0)[number]
+				},
+				catch: (e) =>
+					new ParseResult.Type(
+						ast,
+						input,
+						e instanceof Error ? e.message : 'Failed to parse rank'
+					),
+			}),
+		encode: (input, _options, ast) =>
+			ParseResult.try({
+				try: () => {
+					const rank = input + 1
 
-      if (rank < 1 || rank > 8) {
-        throw new Error(`Invalid rank: ${input}`)
-      }
-      return rank as typeof RANKS[number]
-    },
-    catch: (e) => new ParseResult.Type(ast, input, e instanceof Error ? e.message : 'Failed to encode rank'),
-  })
-})
+					if (rank < 1 || rank > 8) {
+						throw new Error(`Invalid rank: ${input}`)
+					}
+					return rank as (typeof RANKS)[number]
+				},
+				catch: (e) =>
+					new ParseResult.Type(
+						ast,
+						input,
+						e instanceof Error ? e.message : 'Failed to encode rank'
+					),
+			}),
+	}
+)
 
 export const AlgebraicNotationSchema = Schema.TemplateLiteral(
 	Schema.Literal(...FILES),
@@ -100,19 +120,18 @@ export const parseAlgebraicNotation = (algebraicNotation: string) =>
 			algebraicNotation
 		)
 
-    const [file, rank] = yield* Effect.all([
-      Schema.decodeUnknown(FileSchema)(validated[0]),
-      Schema.decodeUnknown(RankSchema)(parseInt(validated[1], 10))
-    ])
+		const [file, rank] = yield* Effect.all([
+			Schema.decodeUnknown(FileSchema)(validated[0]),
+			Schema.decodeUnknown(RankSchema)(parseInt(validated[1], 10)),
+		])
 
 		return to0x88(file, rank)
 	})
 
-export const toAlgebraicNotation = (sq: Square0x88) =>
-	Effect.sync(function () {
-		const { file, rank } = from0x88(sq)
+export const toAlgebraicNotation = (sq: Square0x88) => {
+	const { file, rank } = from0x88(sq)
 
-		const fileChar = String.fromCharCode('a'.charCodeAt(0) + file)
-		const rankChar = (rank + 1).toString()
-		return `${fileChar}${rankChar}`
-	})
+	const fileChar = String.fromCharCode('a'.charCodeAt(0) + file)
+	const rankChar = (rank + 1).toString()
+	return `${fileChar}${rankChar}`
+}
