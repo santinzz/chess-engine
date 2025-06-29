@@ -1,5 +1,5 @@
 import { Schema, Effect, ParseResult } from 'effect'
-import { type Piece, EMPTY_SQUARE, type Square0x88, Rank, File } from '../types'
+import { type Piece, EMPTY_SQUARE, type Square0x88, Rank, File, Color } from '../types'
 
 /**
  * The 0x88 board is a 128-element array.
@@ -137,3 +137,17 @@ export const toAlgebraicNotation = (sq: Square0x88) => {
 	const rankChar = (rank + 1).toString()
 	return `${fileChar}${rankChar}`
 }
+
+export const createEmpty0x88BoardGameState = () => ({
+	board: createEmpty0x88Board(),
+	turn: Color.White,
+	enPassantTargetSquare: null,
+	halfMoveClock: 0,
+	fullMoveNumber: 1,
+	castlingRights: {
+		whiteKingSide: true,
+		whiteQueenSide: true,
+		blackKingSide: true,
+		blackQueenSide: true,
+	},
+})
