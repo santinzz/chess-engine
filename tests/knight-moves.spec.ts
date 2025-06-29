@@ -2,7 +2,7 @@ import { Effect, pipe } from "effect";
 import { test, expect } from 'bun:test'
 import { getKnightPseudoLegalMoves } from "../src/utils/moves/knight";
 import { initializeStartingBoard } from "../src/board";
-import { from0x88, parseAlgebraicNotation, to0x88, toAlgebraicNotation } from "../src/utils/board";
+import { parseAlgebraicNotation, to0x88, toAlgebraicNotation } from "../src/utils/board";
 import { File, Rank } from "../src/types";
 import { modifyPiecePositionAlgebraic } from "../src/utils/moves/move-piece";
 import { printBoard } from "../src/utils/print-board";
