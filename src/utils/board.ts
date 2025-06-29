@@ -116,7 +116,7 @@ export const AlgebraicNotationSchema = Schema.TemplateLiteral(
 
 export type AlgebraicNotation = typeof AlgebraicNotationSchema.Type
 
-export const parseAlgebraicNotation = (algebraicNotation: string) =>
+export const parseAlgebraicNotation = (algebraicNotation: typeof AlgebraicNotationSchema.Type) =>
 	Effect.gen(function* () {
 		const validated = yield* Schema.decodeUnknown(AlgebraicNotationSchema)(
 			algebraicNotation

@@ -4,7 +4,7 @@ import { Color, PieceType, Rank, type Piece, type Square0x88 } from '../../types
 import { from0x88, isOnBoard, toAlgebraicNotation } from '../board'
 import type { GameState } from '../../board'
 
-const PAWN_OFFSETS = {
+export const PAWN_OFFSETS = {
 	[Color.White]: {
 		forward: 16, // +1 Rank
 		captureLeft: 15, // +1 Rank, -1 File
