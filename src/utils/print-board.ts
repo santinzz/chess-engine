@@ -1,9 +1,11 @@
-import { Effect, Console } from 'effect'
-import type { GameState } from '../board'
+import { Effect, Console, Ref } from 'effect'
 import { type Piece, PieceType, Color, Rank, File } from '../types'
 import { to0x88, toAlgebraicNotation } from './board'
+import { GameState } from './game-state'
 
-export const printBoard = (gameState: GameState) => {
+export const printBoard = () => Effect.gen(function* () {
+	const gameStateRef = yield* GameState
+	const gameState = yield* Ref.get(gameStateRef)
 	const pieceToChar = (piece: Piece | null): string => {
 		if (!piece) return '.'
 		const charMap = {
@@ -44,6 +46,5 @@ export const printBoard = (gameState: GameState) => {
 	logs.push(`Half-move Clock: ${gameState.halfMoveClock}`)
 	logs.push(`Full-move Number: ${gameState.fullMoveNumber}`)
 
-	// Print all lines using Console.log
-	return Effect.forEach(logs, Console.log, { discard: true })
-}
+	return yield* Effect.forEach(logs, Console.log, { discard: true })
+})

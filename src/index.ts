@@ -1,53 +1,47 @@
 import { Context, Duration, Effect, Ref, Schedule } from 'effect'
 import { BunContext, BunRuntime } from '@effect/platform-bun'
-import { initializeStartingBoard, type GameState } from './board'
+import { initializeStartingBoard } from './board'
 import { printBoard } from './utils/print-board'
 import { executeMove } from './utils/moves/move'
 import { parseAlgebraicNotation } from './utils/board'
 import type { Move } from './utils/moves'
 import { PieceType } from './types'
+import { GameState } from './utils/game-state'
 
-class GameStateRef {
-	update: (state: GameState) => Effect.Effect<void>
-	get: Effect.Effect<GameState>
+const initialGameState = Ref.make(initializeStartingBoard())
 
-	constructor(private readonly gameState: Ref.Ref<GameState>) {
-		this.update = (state: GameState) => Ref.update(this.gameState, () => state)
-		this.get = Ref.get(this.gameState)
-		
-	}
-}
+const moveD2PawnToD4 = () =>
+	Effect.gen(function* () {
+		const gameStateRef = yield* GameState
+		const gameState = yield* Ref.get(gameStateRef)
+		const d2Pawn = yield* parseAlgebraicNotation('d2')
+		const d2PawnMoveD4 = yield* parseAlgebraicNotation('d4')
+		const move: Move = {
+			from: d2Pawn,
+			to: d2PawnMoveD4,
+			piece: {
+				type: PieceType.Pawn,
+				color: gameState.turn,
+			},
+			capturedPiece: null,
+			promotion: null,
+			isPawnDoublePush: true,
+		}
 
-const make = Effect.gen(function* () {
-	const gameState = yield* initializeStartingBoard()
+		const newGameState = executeMove(gameState, move)
 
-	return yield* Effect.andThen(
-		Ref.make(gameState),
-		(value) => new GameStateRef(value)
-	)
-})
+		return yield* Ref.set(gameStateRef, newGameState)
+	})
 
 const program = Effect.gen(function* () {
-	const gameStateRef = yield* make
-	const gameState = yield* gameStateRef.get
-	yield* printBoard(gameState)
-	const d2Pawn = yield* parseAlgebraicNotation('d2')
-	const d2PawnMoveD4 = yield* parseAlgebraicNotation('d4')
-	const move: Move = {
-		from: d2Pawn,
-		to: d2PawnMoveD4,
-		piece: {
-			type: PieceType.Pawn,
-			color: gameState.turn,
-		},
-		capturedPiece: null,
-		promotion: null,
-	}
+	yield* printBoard()
+	yield* moveD2PawnToD4()
+	yield* printBoard()
 
-	const newGameState = executeMove(gameState, move)
-	yield* gameStateRef.update(newGameState)
+}).pipe(Effect.provideServiceEffect(GameState, initialGameState))
 
-	yield* printBoard(yield* gameStateRef.get)
-})
-
-BunRuntime.runMain(program.pipe(Effect.provide(BunContext.layer)))
+BunRuntime.runMain(
+	program.pipe(
+		Effect.provide(BunContext.layer),
+	)
+)
