@@ -3,15 +3,15 @@ import { test, expect } from 'bun:test'
 import { initializeStartingBoard } from "../src/board"
 import { PieceType, Color } from "../src/types"
 import { createEmpty0x88BoardGameState, parseAlgebraicNotation, toAlgebraicNotation } from "../src/utils/board"
-import { getQueenPseudoLegalMoves } from "../src/utils/moves/queen"
+import { getQueenPseudoLegalMoves } from "../src/moves/queen"
 
 test('Queen initial pseudo-legal moves', () =>
   pipe(
     Effect.gen(function* () {
-      const initialGameState = yield* initializeStartingBoard()
+      const initialGameState = initializeStartingBoard()
 
       const d1QueenSquare = yield* parseAlgebraicNotation('d1')
-      const moves = yield* getQueenPseudoLegalMoves(
+      const moves = getQueenPseudoLegalMoves(
         initialGameState.board,
         d1QueenSquare,
         initialGameState.turn
@@ -35,7 +35,7 @@ test('Queen pseudo-legal moves from d1 empty board', () =>
         color: Color.White
       }
 
-      const moves = yield* getQueenPseudoLegalMoves(
+      const moves = getQueenPseudoLegalMoves(
         emptyBoardGameState.board,
         d1QueenSquare,
         emptyBoardGameState.turn

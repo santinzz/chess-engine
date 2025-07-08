@@ -1,8 +1,8 @@
 import type { Move } from '.'
-import type { GameState } from '../../board'
-import { Color, EMPTY_SQUARE, PieceType, type Square0x88 } from '../../types'
-import { to0x88, type Board0x88 } from '../board'
-import { File, Rank } from '../../types'
+import type { GameState } from '../board'
+import { Color, EMPTY_SQUARE, PieceType, type Square0x88 } from '../types'
+import { to0x88, type Board0x88 } from '../utils/board'
+import { File, Rank } from '../types'
 import { PAWN_OFFSETS } from './pawn'
 
 export const executeMove = (gameState: GameState, move: Move) => {
@@ -14,7 +14,6 @@ export const executeMove = (gameState: GameState, move: Move) => {
 
 	if (move.capturedPiece) {
 		if (move.isEnPassant) {
-			const pawnColor = move.piece.color
 			const capturedPawnSquare = move.to
 			newBoard[capturedPawnSquare] = EMPTY_SQUARE
 		}

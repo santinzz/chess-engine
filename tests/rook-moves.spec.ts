@@ -2,18 +2,18 @@ import { expect, test } from 'bun:test'
 import { Effect, pipe } from 'effect'
 import { initializeStartingBoard } from '../src/board'
 import { createEmpty0x88BoardGameState, parseAlgebraicNotation, toAlgebraicNotation } from '../src/utils/board'
-import { getRookPseudoLegalMoves } from '../src/utils/moves/rook'
+import { getRookPseudoLegalMoves } from '../src/moves/rook'
 import { Color, PieceType } from '../src/types'
-import { modifyPiecePositionAlgebraic } from '../src/utils/moves/move-piece'
+import { modifyPiecePositionAlgebraic } from '../src/moves/move-piece'
 
 test('Rook initial pseudo-legal moves', () =>
   pipe(
     Effect.gen(function* () {
-      const initialGameState = yield* initializeStartingBoard()
+      const initialGameState = initializeStartingBoard()
       
       const a1RookSquare = yield* parseAlgebraicNotation('a1')
 
-      const moves = yield* getRookPseudoLegalMoves(
+      const moves = getRookPseudoLegalMoves(
         a1RookSquare,
         initialGameState.board,
         initialGameState.turn
@@ -37,7 +37,7 @@ test('Rook pseudo-legal moves from a1 empty board', () =>
         color: Color.White,
       }
 
-      const moves = yield* getRookPseudoLegalMoves(
+      const moves = getRookPseudoLegalMoves(
         a1RookSquare,
         emptyBoardGameState.board,
         emptyBoardGameState.turn
@@ -56,13 +56,13 @@ test('Rook pseudo-legal moves from a1 empty board', () =>
 test('white Rook pseudo-legal moves from d4 with pieces', () =>
   pipe(
     Effect.gen(function* () {
-      const initialGameState = yield* initializeStartingBoard()
+      const initialGameState = initializeStartingBoard()
 
       yield* modifyPiecePositionAlgebraic(initialGameState.board, 'h1', 'd4')
 
       const d4RookSquare = yield* parseAlgebraicNotation('d4')
 
-      const moves = yield* getRookPseudoLegalMoves(
+      const moves = getRookPseudoLegalMoves(
         d4RookSquare,
         initialGameState.board,
         initialGameState.turn

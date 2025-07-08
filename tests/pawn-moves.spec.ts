@@ -2,17 +2,17 @@ import { expect, test } from 'bun:test'
 import { Effect, pipe } from 'effect'
 import { initializeStartingBoard, type GameState } from '../src/board'
 import { createEmpty0x88Board, parseAlgebraicNotation, toAlgebraicNotation } from '../src/utils/board'
-import { getPawnPseudoLegalMoves } from '../src/utils/moves/pawn'
+import { getPawnPseudoLegalMoves } from '../src/moves/pawn'
 import { Color, PieceType } from '../src/types'
 
 test('A2 pawn initial pseudo-legal moves', () => 
   pipe(
     Effect.gen(function* () {
-      const initialGameState = yield* initializeStartingBoard()
+      const initialGameState = initializeStartingBoard()
 
       const sq = yield* parseAlgebraicNotation('a2')
 
-      const moves = yield* getPawnPseudoLegalMoves(
+      const moves = getPawnPseudoLegalMoves(
         sq,
         initialGameState,
       )
@@ -30,11 +30,11 @@ test('A2 pawn initial pseudo-legal moves', () =>
 test('A7 pawn initial pseudo-legal moves', () =>
   pipe(
     Effect.gen(function* () {
-      const initialGameState = yield* initializeStartingBoard()
+      const initialGameState = initializeStartingBoard()
 
       const sq = yield* parseAlgebraicNotation('a7')
 
-      const moves = yield* getPawnPseudoLegalMoves(
+      const moves = getPawnPseudoLegalMoves(
         sq,
         {
           ...initialGameState,
@@ -85,7 +85,7 @@ test('A5 white pawn en passant to B5 black pawn', () =>
         color: Color.Black,
       }
 
-      const moves = yield* getPawnPseudoLegalMoves(
+      const moves = getPawnPseudoLegalMoves(
         a5PawnSquare,
         gameState,
       )

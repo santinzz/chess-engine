@@ -9,11 +9,13 @@
     "typescript": "^5.0.0"
   },
   "dependencies": {
+    "@effect/platform": "^0.87.1",
     "@effect/platform-bun": "^0.72.3",
     "effect": "^3.16.10"
   },
   "scripts": {
     "start": "bun run src/index.ts",
-    "dev": "bun run src/index.ts --watch"
+    "dev": "bun run src/index.ts --watch",
+    "game": "bun run src/game.ts"
   }
 }

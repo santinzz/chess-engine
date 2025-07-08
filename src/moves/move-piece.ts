@@ -1,7 +1,7 @@
 import { Effect } from "effect"
 import { getPieceAt, MoveError } from "."
-import type { Board0x88 } from "../board"
-import { parseAlgebraicNotation, type AlgebraicNotation } from "../board"
+import type { Board0x88 } from "../utils/board"
+import { parseAlgebraicNotation, type AlgebraicNotation } from "../utils/board"
 
 export const modifyPiecePositionAlgebraic = (
   board: Board0x88,
@@ -10,7 +10,7 @@ export const modifyPiecePositionAlgebraic = (
 ) => Effect.gen(function* () {
   const fromSq0x88 = yield* parseAlgebraicNotation(fromSq)
   const toSq0x88 = yield* parseAlgebraicNotation(toSq)
-  const pieceAtFrom = yield* getPieceAt(board, fromSq0x88)
+  const pieceAtFrom = getPieceAt(board, fromSq0x88)
 
   if (pieceAtFrom === null) {
     return yield* Effect.fail(
