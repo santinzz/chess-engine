@@ -13,9 +13,7 @@ test('Initial position legal moves', () =>
 
       const legalMoves = getLegalMoves(gameState)
 
-      for (const move of legalMoves) {
-        console.log(`Piece: ${move.piece.type}, From: ${toAlgebraicNotation(move.from)}, To: ${toAlgebraicNotation(move.to)}`)
-      }
+      expect(legalMoves.length).toBeGreaterThan(10)
     }),
     Effect.provideServiceEffect(
       GameState,
