@@ -1,9 +1,7 @@
 import { test, expect } from 'bun:test'
 import { Effect, pipe, Ref } from 'effect'
-import { initializeStartingBoard } from '../src/board'
 import { fenStringToGameState } from '../src/utils/fen'
 import { GameState } from '../src/utils/game-state'
-import { printBoard } from '../src/utils/print-board'
 
 const gameState = fenStringToGameState('8/5PN1/4N1P1/ppP2KR1/P1p5/n3k3/4pb2/4R3 w - - 0 1')
 
@@ -15,7 +13,10 @@ test('King shouldnt be able to castle', () =>
       const gameStateRef = yield* GameState
       const gameState = yield* Ref.get(gameStateRef)
 
-      yield* printBoard()
+      const eigthRank = gameState.board.slice(112, 128)
+      for (const square of eigthRank) {
+        expect(square).toBeNull() // Ensure the 8th rank is empty
+      }
 
       expect(1).toBe(1) // Placeholder for actual test logic
     }),
