@@ -151,3 +151,9 @@ export const createEmpty0x88BoardGameState = () => ({
 		blackQueenSide: true,
 	},
 })
+
+export const to64index = (sq: Square0x88): number => {
+	const { file, rank } = from0x88(sq)
+	return rank * 8 + file // Convert to 64-square index
+}
+
