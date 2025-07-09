@@ -1,5 +1,5 @@
 import { Data } from 'effect'
-import type { Square0x88, Piece, Color } from '../types'
+import type { Square0x88, Piece, Color, PieceType } from '../types'
 import { type Board0x88, isOnBoard } from '../utils/board'
 import type { GameState } from '../board'
 import { getPseudoLegalMoves } from './piece'
@@ -55,12 +55,15 @@ export function isSquareAttacked(
 	attackingColor: Color,
 	gameState: GameState
 ) {
-	const opponentPieces = gameState.board.filter(
-		(piece) => piece !== null && piece.color === attackingColor
-	) as Piece[]
+	const opponentPieces = gameState.board.map((piece, index) => {
+		if (piece && piece.color === attackingColor) {
+			return { type: piece.type, sq: index as Square0x88 }
+		}
+	}).filter(Boolean) as { type: PieceType; sq: Square0x88 }[]
+
 
 	for (const piece of opponentPieces) {
-		const pseudoLegalMoves = getPseudoLegalMoves(piece.type, sq, gameState)
+		const pseudoLegalMoves = getPseudoLegalMoves(piece.type, piece.sq, gameState)
 		if (pseudoLegalMoves.some((move) => move.to === sq)) {
 			return true
 		}

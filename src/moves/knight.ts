@@ -19,15 +19,6 @@ export const getKnightPseudoLegalMoves = (
 		})
 	}
 
-	if (pieceAtFrom.color !== turn) {
-		throw new MoveError({
-			message: `Piece at source square ${toAlgebraicNotation(
-				fromSq
-			)} is not of color ${turn}`,
-			cause: 'PieceOfOpponentColor',
-		})
-	}
-
 	if (pieceAtFrom.type !== PieceType.Knight) {
 		throw new MoveError({
 			message: `Piece at source square ${toAlgebraicNotation(

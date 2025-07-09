@@ -24,15 +24,6 @@ export const getKingPseudoLegalMoves = (
 		})
 	}
 
-	if (pieceAtFrom.color !== gameState.turn) {
-		throw new MoveError({
-			message: `Piece at source square ${toAlgebraicNotation(
-				fromSq
-			)} is not of color ${gameState.turn}`,
-			cause: 'PieceOfOpponentColor',
-		})
-	}
-
 	if (pieceAtFrom.type !== PieceType.King) {
 		throw new MoveError({
 			message: `Piece at source square ${toAlgebraicNotation(
@@ -61,6 +52,11 @@ export const getKingPseudoLegalMoves = (
 		if (isOnBoard(toSq)) {
 			const pieceAtTo = gameState.board[toSq]
 			if (pieceAtTo === null || pieceAtTo.color !== pieceAtFrom.color) {
+				if (pieceAtFrom.color === gameState.turn && isSquareAttacked(toSq, gameState.turn === Color.White ? Color.Black : Color.White, gameState)) {
+					// If the square is attacked, the king cannot move there
+					continue
+				}
+
 				pseudoLegalMoves.push({
 					from: fromSq,
 					to: toSq,

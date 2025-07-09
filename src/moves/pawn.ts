@@ -63,15 +63,6 @@ export const getPawnPseudoLegalMoves = (
 		})
 	}
 
-	if (pieceAtFrom.color !== gameState.turn) {
-		throw new MoveError({
-			message: `Piece at source square ${toAlgebraicNotation(
-				fromSq
-			)} is not of color ${gameState.turn}`,
-			cause: 'PieceOfOpponentColor',
-		})
-	}
-
 	if (pieceAtFrom.type !== PieceType.Pawn) {
 		throw new MoveError({
 			message: `Piece at source square ${toAlgebraicNotation(
