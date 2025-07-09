@@ -5,7 +5,7 @@ import { to0x88 } from '../utils/board'
 import { File, Rank } from '../types'
 import { PAWN_OFFSETS } from './pawn'
 
-export const executeMove = (gameState: GameState, move: Move) => {
+export const executeMove = (gameState: GameState, move: Move): GameState => {
 	const newBoard = [...gameState.board]
 	const newCastlingRights = { ...gameState.castlingRights }
 
@@ -106,6 +106,8 @@ export const executeMove = (gameState: GameState, move: Move) => {
 
   const newTurn = gameState.turn === Color.White ? Color.Black : Color.White
 
+	const isKingMove = move.piece.type === PieceType.King
+
   return {
     board: newBoard,
     turn: newTurn,
@@ -113,5 +115,7 @@ export const executeMove = (gameState: GameState, move: Move) => {
     enPassantTargetSquare: newEnPassantTargetSquare,
     halfMoveClock: newHalfMoveClock,
     fullMoveNumber: newFullMoveNumber,
+		whiteKingSquare: gameState.turn === Color.White && isKingMove ? move.to : gameState.whiteKingSquare,
+		blackKingSquare: gameState.turn === Color.Black && isKingMove ? move.to : gameState.blackKingSquare,
   }
 }

@@ -4,6 +4,8 @@ import { type Board0x88, isOnBoard, toAlgebraicNotation } from '../utils/board'
 import type { GameState } from '../board'
 import { getPseudoLegalMoves } from './piece'
 import { executeMove } from './move'
+import { PAWN_OFFSETS } from './pawn'
+import { KNIGHT_OFFSETS } from './knight'
 
 export type Move = {
 	from: Square0x88
@@ -28,20 +30,6 @@ export class MoveError extends Data.TaggedError('MoveError')<{
 }> {}
 
 /**
- * Get the piece at a specific 0x88 square.
- * @param board The 0x88 board.
- * @param sq The 0x88 square index.
- * @returns An Effect that succeeds with the Piece | null or fails with 'InvalidSquare'.
- */
-export const getPieceAt = (board: Board0x88, sq: Square0x88) => {
-	if (!isOnBoard(sq)) {
-		return null
-	}
-
-	return board[sq]
-}
-
-/**
  * Placeholder for checking if a square is attacked by the opponent.
  * This will be properly implemented in the "Check for Check" phase.
  * For now, it always returns false.
@@ -50,27 +38,79 @@ export const getPieceAt = (board: Board0x88, sq: Square0x88) => {
  * @param gameState The current game state.
  * @returns True if the square is attacked, false otherwise.
  */
-export function isSquareAttacked(
-	sq: Square0x88,
-	attackingColor: Color,
-	gameState: GameState
-) {
-	const opponentPieces = gameState.board.map((piece, index) => {
-		if (piece && piece.color === attackingColor) {
-			return { type: piece.type, sq: index as Square0x88 }
-		}
-	}).filter(Boolean) as { type: PieceType; sq: Square0x88 }[]
+	export const isSquareAttacked = (
+		sq: Square0x88,
+		attackingColor: Color,
+		gameState: GameState
+	): boolean => {
+		const board = gameState.board
+		
+		const pawnOffsets = attackingColor === Color.White ? [-17, -15] : [15, 17]
 
-
-	for (const piece of opponentPieces) {
-		const pseudoLegalMoves = getPseudoLegalMoves(piece.type, piece.sq, gameState)
-		if (pseudoLegalMoves.some((move) => move.to === sq)) {
-			return true
+		for (const offset of pawnOffsets) {
+			const attackSquare = sq + offset
+			if (isOnBoard(attackSquare)) {
+				const piece = board[attackSquare]
+				if (piece && piece.type === PieceType.Pawn && piece.color === attackingColor) {
+					return true
+				}
+			}
 		}
+
+		for (const offset of KNIGHT_OFFSETS) {
+			const attackSquare = sq + offset
+			if (isOnBoard(attackSquare)) {
+				const piece = board[attackSquare]
+				if (piece && piece.type === PieceType.Knight && piece.color === attackingColor) {
+					return true
+				}
+			}
+		}
+
+		const rookDirections = [-16, 16, -1, 1]; // Up, Down, Left, Right
+		const bishopDirections = [-17, -15, 15, 17]; // Diagonals
+
+		for (const direction of rookDirections) {
+			let currentSquare = sq + direction;
+			while (isOnBoard(currentSquare)) {
+				const piece = board[currentSquare]
+				if (piece) {
+					if (piece.color === attackingColor && (piece.type === PieceType.Rook || piece.type === PieceType.Queen)) {
+						return true
+					}
+					break
+				}
+				currentSquare += direction
+			}
+		}
+
+		for (const direction of bishopDirections) {
+			let currentSq = sq + direction;
+			while (isOnBoard(currentSq)) {
+				const piece = board[currentSq]
+				if (piece) {
+					if (piece.color === attackingColor && (piece.type === PieceType.Bishop || piece.type === PieceType.Queen)) {
+						return true;
+					}
+					break; // Blocked
+				}
+				currentSq += direction;
+			}
+		}
+
+		const kingOffsets = [-17, -16, -15, -1, 1, 15, 16, 17]
+		for (const offset of kingOffsets) {
+			const attackSquare = sq + offset
+			if (isOnBoard(attackSquare)) {
+				const piece = board[attackSquare]
+				if (piece && piece.type === PieceType.King && piece.color === attackingColor) {
+					return true
+				}
+			}
+		}
+
+		return false; 
 	}
-
-	return false
-}
 
 export function findKingSquare(
 	color: Color,
@@ -92,14 +132,10 @@ export function isKingInCheck (
 	gameState: GameState,
 	color: Color,
 ) {
-	const kingSquare = findKingSquare(color, gameState.board)
-	
-	if (kingSquare === null) {
-		console.warn(`No king found for color ${color}.`)
-		return false
-	}
-
 	const opponentColor = color === Color.White ? Color.Black : Color.White
+	const kingSquare = color === Color.White
+		? gameState.whiteKingSquare
+		: gameState.blackKingSquare
 
 	return isSquareAttacked(kingSquare, opponentColor, gameState)
 }
@@ -109,11 +145,11 @@ export function getLegalMoves(gameState: GameState): Move[] {
 	const currentColor = gameState.turn
 
 	for (let fromSq = 0; fromSq < 128; fromSq++) {
-		const piece = getPieceAt(gameState.board, fromSq)
+		const piece = gameState.board[fromSq]
 
 		if (!piece || piece.color !== currentColor) continue
 
-		let pseudoLegalMoves = getPseudoLegalMoves(piece.type, fromSq, gameState)
+		let pseudoLegalMoves = getPseudoLegalMoves(piece, fromSq, gameState)
 
 		for (const pseudoMove of pseudoLegalMoves) {
 			const tempGameState = executeMove(gameState, pseudoMove)

@@ -1,31 +1,13 @@
-import { getPieceAt, type Move } from '.'
 import type { GameState } from '../board'
-import { PieceType, type Square0x88 } from '../types'
-import { isOnBoard, toAlgebraicNotation } from '../utils/board'
-import { MoveError } from '../errors'
+import { type Piece, type Square0x88 } from '../types'
+import { isOnBoard } from '../utils/board'
+import type { Move } from '.'
 
 export const getRookPseudoLegalMoves = (
 	fromSq: Square0x88,
 	board: GameState['board'],
+	pieceAtFrom: Piece
 ) => {
-	const pieceAtFrom = getPieceAt(board, fromSq)
-
-	if (pieceAtFrom === null) {
-		throw new MoveError({
-			message: `No piece at source square ${toAlgebraicNotation(fromSq)}`,
-			cause: 'EmptySourceSquare',
-		})
-	}
-
-	if (pieceAtFrom.type !== PieceType.Rook) {
-		throw new MoveError({
-			message: `Piece at source square ${toAlgebraicNotation(
-				fromSq
-			)} is not a Rook`,
-			cause: 'InvalidPieceType',
-		})
-	}
-
 	const pseudoLegalMoves: Move[] = []
 
 	// Horizontal moves

@@ -1,8 +1,7 @@
-import { getPieceAt, type Move } from '.'
+import {type Move } from '.'
 import { Color, PieceType, Rank, type Piece, type Square0x88 } from '../types'
-import { from0x88, isOnBoard, toAlgebraicNotation } from '../utils/board'
+import { from0x88, isOnBoard } from '../utils/board'
 import type { GameState } from '../board'
-import { MoveError } from '../errors'
 
 export const PAWN_OFFSETS = {
 	[Color.White]: {
@@ -52,26 +51,9 @@ const generatePromotionMoves = (
 
 export const getPawnPseudoLegalMoves = (
 	fromSq: Square0x88,
-	gameState: GameState
+	gameState: GameState,
+	pieceAtFrom: Piece
 ) => {
-	const pieceAtFrom = getPieceAt(gameState.board, fromSq)
-
-	if (pieceAtFrom === null) {
-		throw new MoveError({
-			message: `No piece at source square ${toAlgebraicNotation(fromSq)}`,
-			cause: 'EmptySourceSquare',
-		})
-	}
-
-	if (pieceAtFrom.type !== PieceType.Pawn) {
-		throw new MoveError({
-			message: `Piece at source square ${toAlgebraicNotation(
-				fromSq
-			)} is not a Pawn`,
-			cause: 'InvalidPieceType',
-		})
-	}
-
 	const pseudoLegalMoves: Move[] = []
 	const { rank: currentRank } = from0x88(fromSq)
 

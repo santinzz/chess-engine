@@ -1,31 +1,13 @@
-import { getPieceAt, type Move } from '.'
-import { MoveError } from '../errors'
-import { type Square0x88, Color, PieceType } from '../types'
-import { type Board0x88, isOnBoard, toAlgebraicNotation } from '../utils/board'
+import { type Move } from '.'
+import { type Piece, type Square0x88, Color } from '../types'
+import { type Board0x88, isOnBoard } from '../utils/board'
 
 export const getQueenPseudoLegalMoves = (
 	board: Board0x88,
 	fromSq: Square0x88,
-	turn: Color
+	turn: Color,
+	pieceAtFrom: Piece
 ) => {
-	const pieceAtFrom = getPieceAt(board, fromSq)
-
-	if (pieceAtFrom === null) {
-		throw new MoveError({
-			message: `No piece at source square ${toAlgebraicNotation(fromSq)}`,
-			cause: 'EmptySourceSquare',
-		})
-	}
-
-	if (pieceAtFrom.type !== PieceType.Queen) {
-		throw new MoveError({
-			message: `Piece at source square ${toAlgebraicNotation(
-				fromSq
-			)} is not a Queen`,
-			cause: 'InvalidPieceType',
-		})
-	}
-
 	const pseudoLegalMoves: Move[] = []
 
 	// Bishop moves in all four diagonal directions

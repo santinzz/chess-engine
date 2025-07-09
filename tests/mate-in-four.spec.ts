@@ -2,11 +2,8 @@ import { test, expect } from 'bun:test'
 import { Effect, pipe, Ref } from 'effect'
 import { fenStringToGameState } from '../src/utils/fen'
 import { GameState } from '../src/utils/game-state'
-import { printBoard } from '../src/utils/print-board'
 import { findBestMove } from '../src/engine/minimax'
-import { parseAlgebraicNotation, toAlgebraicNotation } from '../src/utils/board'
-import { getQueenPseudoLegalMoves } from '../src/moves/queen'
-import { PieceType } from '../src/types'
+import { toAlgebraicNotation } from '../src/utils/board'
 
 const initialState = Ref.make(fenStringToGameState('8/k2r4/p7/2b1Bp2/P3p3/qp4R1/4QP2/1K6 b - - 0 1'))
 

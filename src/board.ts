@@ -12,7 +12,9 @@ export type GameState = {
 	}
 	enPassantTargetSquare: Square0x88 | null
 	halfMoveClock: number
-	fullMoveNumber: number
+	fullMoveNumber: number,
+	whiteKingSquare: Square0x88
+	blackKingSquare: Square0x88
 }
 
 /**
@@ -114,5 +116,7 @@ export const initializeStartingBoard = (): GameState => {
 		enPassantTargetSquare: null,
 		halfMoveClock: 0,
 		fullMoveNumber: 1,
+		whiteKingSquare: to0x88(File.E, Rank.R1),
+		blackKingSquare: to0x88(File.E, Rank.R8),
 	}
 }

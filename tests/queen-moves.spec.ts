@@ -1,7 +1,7 @@
 import { pipe, Effect } from "effect"
 import { test, expect } from 'bun:test'
 import { initializeStartingBoard } from "../src/board"
-import { PieceType, Color } from "../src/types"
+import { PieceType, Color, type Piece } from "../src/types"
 import { createEmpty0x88BoardGameState, parseAlgebraicNotation, toAlgebraicNotation } from "../src/utils/board"
 import { getQueenPseudoLegalMoves } from "../src/moves/queen"
 
@@ -14,7 +14,8 @@ test('Queen initial pseudo-legal moves', () =>
       const moves = getQueenPseudoLegalMoves(
         initialGameState.board,
         d1QueenSquare,
-        initialGameState.turn
+        initialGameState.turn,
+        initialGameState.board[d1QueenSquare] as Piece // Pass the piece at the from square
       )
 
       expect(moves).toHaveLength(0)
@@ -38,7 +39,8 @@ test('Queen pseudo-legal moves from d1 empty board', () =>
       const moves = getQueenPseudoLegalMoves(
         emptyBoardGameState.board,
         d1QueenSquare,
-        emptyBoardGameState.turn
+        emptyBoardGameState.turn,
+        emptyBoardGameState.board[d1QueenSquare] as Piece // Pass the piece at the from square
       )
 
       const movesInAlgebraic = moves.map(move => toAlgebraicNotation(move.to))

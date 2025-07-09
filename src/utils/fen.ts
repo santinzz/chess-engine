@@ -1,5 +1,5 @@
 import { AlgebraicNotationSchema, createEmpty0x88Board, parseAlgebraicNotation } from './board'
-import { Color, PieceType } from '../types'
+import { Color, PieceType, type Square0x88 } from '../types'
 import type { GameState } from '../board'
 import { Effect } from 'effect'
 
@@ -41,6 +41,9 @@ export function fenStringToGameState(fenString: string): GameState {
 		throw new Error('Invalid FEN: Piece placement must have 8 ranks.')
 	}
 
+	let whiteKingSquare: Square0x88 | undefined
+	let blackKingSquare: Square0x88 | undefined
+
 	for (let rIdx = 0; rIdx < 8; rIdx++) {
 		const rankStr = ranks[rIdx]
 		let fileIndex = 0
@@ -61,6 +64,14 @@ export function fenStringToGameState(fenString: string): GameState {
         if (!result) {
           throw new Error(`Invalid FEN: Unknown piece character '${char}'.`)
         }
+
+				if (result.type === PieceType.King) {
+					if (result.color === Color.White) {
+						whiteKingSquare = square
+					} else {
+						blackKingSquare = square
+					}
+				}
 
 				board[square] = result
 				fileIndex++
@@ -120,6 +131,10 @@ export function fenStringToGameState(fenString: string): GameState {
 
   const enPassantTargetSquare = parsedEnPassantTarget ? Effect.runSync(parseAlgebraicNotation(parsedEnPassantTarget as unknown as typeof AlgebraicNotationSchema.Type)) : null
 
+	if (!whiteKingSquare || !blackKingSquare) {
+		throw new Error('Invalid FEN: King squares must be specified.')
+	}
+
 	return {
 		board: board, // A 0x88 flat array representing the board
 		turn: activeColor === 'w' ? Color.White : Color.Black,
@@ -132,5 +147,7 @@ export function fenStringToGameState(fenString: string): GameState {
 		enPassantTargetSquare, // e.g., "e3", "h6", or null
     halfMoveClock,
     fullMoveNumber: fullmoveNumber,
+		whiteKingSquare,
+		blackKingSquare
 	}
 }

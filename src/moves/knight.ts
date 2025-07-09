@@ -1,33 +1,15 @@
-import { EMPTY_SQUARE, PieceType, type Color, type Square0x88 } from '../types'
-import { isOnBoard, toAlgebraicNotation, type Board0x88 } from '../utils/board'
-import { getPieceAt, type Move } from '.'
-import { MoveError } from '../errors'
+import { EMPTY_SQUARE, type Color, type Piece, type Square0x88 } from '../types'
+import { isOnBoard, type Board0x88 } from '../utils/board'
+import { type Move } from '.'
 
-const KNIGHT_OFFSETS = [-33, -31, -18, -14, 14, 18, 31, 33]
+export const KNIGHT_OFFSETS = [-33, -31, -18, -14, 14, 18, 31, 33]
 
 export const getKnightPseudoLegalMoves = (
 	board: Board0x88,
 	fromSq: Square0x88,
-	turn: Color
+	turn: Color,
+	pieceAtFrom: Piece
 ) => {
-	const pieceAtFrom = getPieceAt(board, fromSq)
-
-	if (pieceAtFrom === EMPTY_SQUARE) {
-		throw new MoveError({
-			message: `No piece at source square ${toAlgebraicNotation(fromSq)}`,
-			cause: 'EmptySourceSquare',
-		})
-	}
-
-	if (pieceAtFrom.type !== PieceType.Knight) {
-		throw new MoveError({
-			message: `Piece at source square ${toAlgebraicNotation(
-				fromSq
-			)} is not a Knight`,
-			cause: 'InvalidPieceType',
-		})
-	}
-
 	const pseudoLegalMoves: Move[] = []
 
 	for (const offset of KNIGHT_OFFSETS) {

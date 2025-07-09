@@ -1,4 +1,4 @@
-import { getPieceAt, isSquareAttacked, type Move } from '.'
+import { isSquareAttacked, type Move } from '.'
 import type { GameState } from '../board'
 import {
 	Color,
@@ -15,7 +15,7 @@ export const getKingPseudoLegalMoves = (
 	fromSq: Square0x88,
 	gameState: GameState
 ) => {
-	const pieceAtFrom = getPieceAt(gameState.board, fromSq)
+	const pieceAtFrom = gameState.board[fromSq]
 
 	if (pieceAtFrom === null) {
 		throw new MoveError({

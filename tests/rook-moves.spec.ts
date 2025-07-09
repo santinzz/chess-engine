@@ -3,7 +3,7 @@ import { Effect, pipe } from 'effect'
 import { initializeStartingBoard } from '../src/board'
 import { createEmpty0x88BoardGameState, parseAlgebraicNotation, toAlgebraicNotation } from '../src/utils/board'
 import { getRookPseudoLegalMoves } from '../src/moves/rook'
-import { Color, PieceType } from '../src/types'
+import { Color, PieceType, type Piece } from '../src/types'
 import { modifyPiecePositionAlgebraic } from '../src/moves/move-piece'
 
 test('Rook initial pseudo-legal moves', () =>
@@ -16,7 +16,7 @@ test('Rook initial pseudo-legal moves', () =>
       const moves = getRookPseudoLegalMoves(
         a1RookSquare,
         initialGameState.board,
-        initialGameState.turn
+        initialGameState.board[a1RookSquare] as Piece // Pass the piece at the from square
       )
 
       expect(moves).toHaveLength(0)
@@ -40,7 +40,7 @@ test('Rook pseudo-legal moves from a1 empty board', () =>
       const moves = getRookPseudoLegalMoves(
         a1RookSquare,
         emptyBoardGameState.board,
-        emptyBoardGameState.turn
+        emptyBoardGameState.board[a1RookSquare] as Piece // Pass the piece at the from square
       )
 
       expect(moves).toHaveLength(14)
@@ -65,7 +65,7 @@ test('white Rook pseudo-legal moves from d4 with pieces', () =>
       const moves = getRookPseudoLegalMoves(
         d4RookSquare,
         initialGameState.board,
-        initialGameState.turn
+        initialGameState.board[d4RookSquare] as Piece // Pass the piece at the from square
       )
       
       const movesInAlgebraic = moves.map(move => toAlgebraicNotation(move.to))

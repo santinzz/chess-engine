@@ -10,7 +10,6 @@ import { PieceType } from '../types'
 
 const CHECKMATE_SCORE = 1_000_000
 
-let nodesVisited = 0
 
 export const minimax = (
 	gameState: GameState,
@@ -18,8 +17,6 @@ export const minimax = (
 	alpha: number,
 	beta: number
 ) => {
-  nodesVisited++
-  console.log(`Nodes visited: ${nodesVisited}`)
 	const gameResult = isGameOver(gameState)
 
 	if (gameResult !== GameResult.NotOver) {
@@ -45,13 +42,10 @@ export const minimax = (
 		if (move.capturedPiece) {
 			return PIECE_VALUES[move.capturedPiece.type]
 		}
-		// Add other heuristics here (e.g., checks, promotions)
-		// Example: Prioritize queen promotions heavily
 		if (move.promotion) {
 			if (move.promotion.type === PieceType.Queen) return 9000 // Very high
 		}
-		// A small negative score for quiet moves to ensure captures are prioritized
-		return 0 // Default for non-captures
+		return 0
 	}
 
 	for (const scoredMove of scoredMoves) {

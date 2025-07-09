@@ -1,5 +1,5 @@
 import { Match } from 'effect'
-import { PieceType, type Square0x88 } from '../types'
+import { PieceType, type Piece, type Square0x88 } from '../types'
 import { getPawnPseudoLegalMoves } from './pawn'
 import { getKnightPseudoLegalMoves } from './knight'
 import { getKingPseudoLegalMoves } from './king'
@@ -9,28 +9,16 @@ import { getQueenPseudoLegalMoves } from './queen'
 import type { GameState } from '../board'
 
 export const getPseudoLegalMoves = (
-	piece: PieceType,
+	piece: Piece,
 	fromSq: Square0x88,
 	gameState: GameState
-) =>
-	Match.value(piece).pipe(
-		Match.when(PieceType.Pawn, () =>
-			getPawnPseudoLegalMoves(fromSq, gameState)
-		),
-		Match.when(PieceType.Knight, () =>
-			getKnightPseudoLegalMoves(gameState.board, fromSq, gameState.turn)
-		),
-		Match.when(PieceType.King, () =>
-			getKingPseudoLegalMoves(fromSq, gameState)
-		),
-		Match.when(PieceType.Bishop, () =>
-			getBishopPseudoLegalMoves(gameState.board, fromSq, gameState.turn)
-		),
-		Match.when(PieceType.Rook, () =>
-			getRookPseudoLegalMoves(fromSq, gameState.board)
-		),
-		Match.when(PieceType.Queen, () =>
-			getQueenPseudoLegalMoves(gameState.board, fromSq, gameState.turn)
-		),
-		Match.exhaustive
-	)
+) => {
+	switch (piece.type) {
+		case PieceType.Pawn: return getPawnPseudoLegalMoves(fromSq, gameState, piece)
+		case PieceType.Knight: return getKnightPseudoLegalMoves(gameState.board, fromSq, gameState.turn, piece)
+		case PieceType.King: return getKingPseudoLegalMoves(fromSq, gameState)
+		case PieceType.Bishop: return getBishopPseudoLegalMoves(gameState.board, fromSq, gameState.turn, piece)
+		case PieceType.Rook: return getRookPseudoLegalMoves(fromSq, gameState.board, piece)
+		case PieceType.Queen: return getQueenPseudoLegalMoves(gameState.board, fromSq, gameState.turn, piece)
+	}
+}

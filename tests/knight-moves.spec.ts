@@ -7,7 +7,7 @@ import {
 	to0x88,
 	toAlgebraicNotation,
 } from '../src/utils/board'
-import { File, Rank } from '../src/types'
+import { File, Rank, type Piece } from '../src/types'
 import { modifyPiecePositionAlgebraic } from '../src/moves/move-piece'
 
 test('Knight initial pseudo-legal moves', () => {
@@ -16,7 +16,8 @@ test('Knight initial pseudo-legal moves', () => {
 	const moves = getKnightPseudoLegalMoves(
 		initialGameState.board,
 		to0x88(File.G, Rank.R1),
-		initialGameState.turn
+		initialGameState.turn,
+		initialGameState.board[to0x88(File.G, Rank.R1)] as Piece // Pass the piece at the from square
 	)
 
 	expect(moves).toHaveLength(2)
@@ -34,7 +35,8 @@ test('Knight pseudo-legal moves from d4', () =>
 			const moves = getKnightPseudoLegalMoves(
 				initialGameState.board,
 				to0x88(File.D, Rank.R4),
-				initialGameState.turn
+				initialGameState.turn,
+				initialGameState.board[to0x88(File.D, Rank.R4)] as Piece //
 			)
 
 			expect(moves).toHaveLength(6)

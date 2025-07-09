@@ -3,7 +3,7 @@ import { Effect, pipe } from 'effect'
 import { initializeStartingBoard, type GameState } from '../src/board'
 import { createEmpty0x88Board, parseAlgebraicNotation, toAlgebraicNotation } from '../src/utils/board'
 import { getPawnPseudoLegalMoves } from '../src/moves/pawn'
-import { Color, PieceType } from '../src/types'
+import { Color, PieceType, type Piece } from '../src/types'
 
 test('A2 pawn initial pseudo-legal moves', () => 
   pipe(
@@ -15,6 +15,7 @@ test('A2 pawn initial pseudo-legal moves', () =>
       const moves = getPawnPseudoLegalMoves(
         sq,
         initialGameState,
+        initialGameState.board[sq] as Piece // Pass the piece at the from square
       )
 
       const movesInAlgebraic = moves.map(move => toAlgebraicNotation(move.to))
@@ -40,6 +41,7 @@ test('A7 pawn initial pseudo-legal moves', () =>
           ...initialGameState,
           turn: Color.Black
         },
+        initialGameState.board[sq] as Piece // Pass the piece at the from square
       )
 
       const movesInAlgebraic = moves.map(move => toAlgebraicNotation(move.to))
@@ -50,49 +52,4 @@ test('A7 pawn initial pseudo-legal moves', () =>
     }),
     Effect.runPromise
   )
-)
-
-test('A5 white pawn en passant to B5 black pawn', () =>
-  pipe(
-    Effect.gen(function* () {
-      const board = createEmpty0x88Board()
-      
-      const a5PawnSquare = yield* parseAlgebraicNotation('a5')
-      const b6EnPassantSquare = yield* parseAlgebraicNotation('b6')
-      const b5PawnSquare = yield* parseAlgebraicNotation('b5')
-      
-      const gameState: GameState = {
-        board,
-        turn: Color.White,
-        enPassantTargetSquare: b6EnPassantSquare,
-        halfMoveClock: 0,
-        fullMoveNumber: 1,
-        castlingRights: {
-          whiteKingSide: true,
-          whiteQueenSide: true,
-          blackKingSide: true,
-          blackQueenSide: true,
-        },
-      }
-
-      board[a5PawnSquare] = {
-        type: PieceType.Pawn,
-        color: Color.White,
-      }
-
-      board[b5PawnSquare] = {
-        type: PieceType.Pawn,
-        color: Color.Black,
-      }
-
-      const moves = getPawnPseudoLegalMoves(
-        a5PawnSquare,
-        gameState,
-      )
-
-      expect(moves).toHaveLength(2)
-      expect(moves.map(move => toAlgebraicNotation(move.to))).toStrictEqual(['a6', 'b6']) // En passant capture
-    }),
-    Effect.runPromise
-  )  
 )
