@@ -27,7 +27,7 @@ export const getPseudoLegalMoves = (
 			getBishopPseudoLegalMoves(gameState.board, fromSq, gameState.turn)
 		),
 		Match.when(PieceType.Rook, () =>
-			getRookPseudoLegalMoves(fromSq, gameState.board, gameState.turn)
+			getRookPseudoLegalMoves(fromSq, gameState.board)
 		),
 		Match.when(PieceType.Queen, () =>
 			getQueenPseudoLegalMoves(gameState.board, fromSq, gameState.turn)

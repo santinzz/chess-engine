@@ -7,7 +7,6 @@ import { MoveError } from '../errors'
 export const getRookPseudoLegalMoves = (
 	fromSq: Square0x88,
 	board: GameState['board'],
-	turn: GameState['turn']
 ) => {
 	const pieceAtFrom = getPieceAt(board, fromSq)
 

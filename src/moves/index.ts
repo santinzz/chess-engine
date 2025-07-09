@@ -1,8 +1,9 @@
 import { Data } from 'effect'
-import type { Square0x88, Piece, Color, PieceType } from '../types'
-import { type Board0x88, isOnBoard } from '../utils/board'
+import { type Square0x88, type Piece, Color, PieceType } from '../types'
+import { type Board0x88, isOnBoard, toAlgebraicNotation } from '../utils/board'
 import type { GameState } from '../board'
 import { getPseudoLegalMoves } from './piece'
+import { executeMove } from './move'
 
 export type Move = {
 	from: Square0x88
@@ -28,14 +29,13 @@ export class MoveError extends Data.TaggedError('MoveError')<{
 
 /**
  * Get the piece at a specific 0x88 square.
- * Returns an Effect that either succeeds with the piece (or null if empty) or fails if the square is off-board.
  * @param board The 0x88 board.
  * @param sq The 0x88 square index.
  * @returns An Effect that succeeds with the Piece | null or fails with 'InvalidSquare'.
  */
 export const getPieceAt = (board: Board0x88, sq: Square0x88) => {
 	if (!isOnBoard(sq)) {
-		throw new Error(`Invalid square: ${sq}. Must be on board.`)
+		return null
 	}
 
 	return board[sq]
@@ -70,4 +70,59 @@ export function isSquareAttacked(
 	}
 
 	return false
+}
+
+export function findKingSquare(
+	color: Color,
+	board: Board0x88
+) {
+	for (let i = 0; i < 128; i++) {
+		const piece = board[i]
+		if (piece) {
+			if (piece.type === PieceType.King && piece.color === color) {
+				return i as Square0x88
+			}
+		}
+	}
+
+	return null
+}
+
+export function isKingInCheck (
+	gameState: GameState,
+	color: Color,
+) {
+	const kingSquare = findKingSquare(color, gameState.board)
+	
+	if (kingSquare === null) {
+		console.warn(`No king found for color ${color}.`)
+		return false
+	}
+
+	const opponentColor = color === Color.White ? Color.Black : Color.White
+
+	return isSquareAttacked(kingSquare, opponentColor, gameState)
+}
+
+export function getLegalMoves(gameState: GameState): Move[] {
+	const legalMoves: Move[] = []
+	const currentColor = gameState.turn
+
+	for (let fromSq = 0; fromSq < 128; fromSq++) {
+		const piece = getPieceAt(gameState.board, fromSq)
+
+		if (!piece || piece.color !== currentColor) continue
+
+		let pseudoLegalMoves = getPseudoLegalMoves(piece.type, fromSq, gameState)
+
+		for (const pseudoMove of pseudoLegalMoves) {
+			const tempGameState = executeMove(gameState, pseudoMove)
+
+			if (!isKingInCheck(tempGameState, currentColor)) {
+				legalMoves.push(pseudoMove)
+			}
+		}
+	}
+
+	return legalMoves
 }

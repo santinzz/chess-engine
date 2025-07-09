@@ -1,7 +1,7 @@
 import type { Move } from '.'
 import type { GameState } from '../board'
 import { Color, EMPTY_SQUARE, PieceType, type Square0x88 } from '../types'
-import { to0x88, type Board0x88 } from '../utils/board'
+import { to0x88 } from '../utils/board'
 import { File, Rank } from '../types'
 import { PAWN_OFFSETS } from './pawn'
 
