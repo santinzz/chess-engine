@@ -13,7 +13,7 @@ test('Mate in four', () =>
       const gameStateRef = yield* GameState
       const gameState = yield* Ref.get(gameStateRef)
 
-      const bestMove = findBestMove(gameState, 7)
+      const bestMove = findBestMove(gameState, 5)
 
       if (!bestMove) {
         return

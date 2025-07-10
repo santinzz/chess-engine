@@ -5,11 +5,19 @@ import { evaluate, PIECE_VALUES } from './evaluation'
 import { executeMove } from '../moves/move'
 import { isKingInCheck } from '../utils/is-king-in-check'
 import { toAlgebraicNotation, type Board0x88 } from '../utils/board'
-import { printBoardWithoutStore } from '../utils/print-board'
 import { PieceType } from '../types'
 
 const CHECKMATE_SCORE = 1_000_000
 
+const getMoveOrderScore = (move: Move, board: Board0x88): number => {
+		if (move.capturedPiece) {
+			return PIECE_VALUES[move.capturedPiece.type]
+		}
+		if (move.promotion) {
+			if (move.promotion.type === PieceType.Queen) return 9000 // Very high
+		}
+		return 0
+	}
 
 export const minimax = (
 	gameState: GameState,
@@ -38,16 +46,6 @@ export const minimax = (
 		score: 0,
 	}))
 
-	const getMoveOrderScore = (move: Move, board: Board0x88): number => {
-		if (move.capturedPiece) {
-			return PIECE_VALUES[move.capturedPiece.type]
-		}
-		if (move.promotion) {
-			if (move.promotion.type === PieceType.Queen) return 9000 // Very high
-		}
-		return 0
-	}
-
 	for (const scoredMove of scoredMoves) {
 		scoredMove.score = getMoveOrderScore(scoredMove.move, gameState.board)
 	}
@@ -59,7 +57,7 @@ export const minimax = (
 		const currentKingColor = gameState.turn
 
 		if (isKingInCheck(gameState, currentKingColor)) {
-			return -Infinity
+			return -(CHECKMATE_SCORE - depth) // Checkmate
 		} else {
 			return 0
 		}

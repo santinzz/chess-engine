@@ -45,7 +45,6 @@ test('White king should only be able to move to g4, e5 and f6', () =>
       const f5KingSquare = yield* parseAlgebraicNotation('f5')
 
       const kingMoves = getKingPseudoLegalMoves(f5KingSquare, gameState)
-      console.log(kingMoves.map(move => toAlgebraicNotation(move.to)))
 
       expect(kingMoves).toHaveLength(3)
       expect(kingMoves.map(move => toAlgebraicNotation(move.to))).toContainAllValues(['g4', 'e5', 'f6'])
